@@ -87,8 +87,10 @@ public class Users implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (role==Role.ADMIN)return List.of(new SimpleGrantedAuthority("ADMIN"),new SimpleGrantedAuthority("USER"));
-        else return List.of(new SimpleGrantedAuthority("USER"));
+        if (this.role==Role.ADMIN){return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"),
+                new SimpleGrantedAuthority("ROLE_USER"));
+        }
+         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
 
@@ -96,12 +98,12 @@ public class Users implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return this.email;
     }
 
     @Override

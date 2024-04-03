@@ -1,5 +1,6 @@
 package com.Kidou.config;
 
+import com.Kidou.entities.user.Users;
 import com.Kidou.repositorys.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,27 +27,60 @@ public class SecurityFilter extends OncePerRequestFilter {
     //request é o token
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = recoverToken(request);
 
-        if (token != null){
+        String token = recoverToken(request);
 
-            var login = tokenService.validateToken(token);
-            UserDetails user = userRepository.findByEmail(login);
+        if (token != null) {
+            System.out.println("Token: " + token);
 
-            var authentication = new UsernamePasswordAuthenticationToken(user,null, user.getAuthorities());
+            //esta chegando nulo
+            String login = tokenService.validateToken(token);
+            System.out.println("Login: " + login);
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            if (login != null) {
+                Users user = userRepository.findByEmail(login);
+
+                if (user != null) {
+                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    System.out.println("User is null");
+                }
+            } else {
+                System.out.println("Login is null");
+            }
         }
         filterChain.doFilter(request, response);
-    }
 
+//        var token = recoverToken(request);
+//
+//        if (token != null){
+//
+//            //user null
+//            var login = tokenService.validateToken(token);
+//            UserDetails user = userRepository.findByEmail(login);
+//
+//            var authentication = new UsernamePasswordAuthenticationToken(user,null, user.getAuthorities());
+//
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//        }
+//        filterChain.doFilter(request, response);
+    }
 
 
     //recorta o Bearer do token
-    private String recoverToken(HttpServletRequest request){
-        var authHeader = request.getHeader("Authorization");
-        if (authHeader==null)return null;
-        return authHeader.replace("Bearer ","");
+    private String recoverToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.replace("Bearer ", "");
+        } else {
+            return null;
+        }
+
     }
+
 
 }

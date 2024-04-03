@@ -30,15 +30,14 @@ public class SpringSecurityConfig {
                 csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/public").permitAll()
-                        .requestMatchers(HttpMethod.GET).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/users/**").hasRole("ADMIN")
 
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults())
+//                .formLogin(Customizer.withDefaults())
+//                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 

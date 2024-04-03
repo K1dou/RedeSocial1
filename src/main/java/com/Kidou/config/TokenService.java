@@ -21,13 +21,11 @@ public class TokenService {
     public String generateToken(Users users){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            String token = JWT.create()
+            return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(users.getEmail())
                     .withExpiresAt(expire())
                     .sign(algorithm);
-
-            return token;
         }catch (JWTCreationException exception ){
             throw new RuntimeException("error generating token "+exception.getMessage());
         }
@@ -41,13 +39,11 @@ public class TokenService {
                     .build()
                     .verify(token)
                     .getSubject();
+
         }catch (JWTVerificationException exception){
-            throw new RuntimeException("token invalido "+exception.getMessage());
+            return "";
         }
     }
-
-
-
 
     private Instant expire(){
         return LocalDateTime.now().plusHours(8).toInstant(ZoneOffset.of("-03:00"));
