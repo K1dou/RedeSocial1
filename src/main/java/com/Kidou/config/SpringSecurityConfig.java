@@ -34,6 +34,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET,"/users/**").hasRole("ADMIN")
 
+
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
 //                .formLogin(Customizer.withDefaults())

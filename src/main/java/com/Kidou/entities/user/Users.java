@@ -32,13 +32,11 @@ public class Users implements UserDetails {
     public Users() {
     }
 
-    public Users(String name, String email, String password, Sexo sexo, Role role) {
-
+    public Users(String name, String email, String password, Sexo sexo) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.sexo = sexo;
-        this.role = role;
     }
 
     public Integer getId() {

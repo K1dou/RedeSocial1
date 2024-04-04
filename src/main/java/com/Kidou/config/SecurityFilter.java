@@ -55,21 +55,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
 
-//        var token = recoverToken(request);
-//
-//        if (token != null){
-//
-//            //user null
-//            var login = tokenService.validateToken(token);
-//            UserDetails user = userRepository.findByEmail(login);
-//
-//            var authentication = new UsernamePasswordAuthenticationToken(user,null, user.getAuthorities());
-//
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//        }
-//        filterChain.doFilter(request, response);
     }
-
 
     //recorta o Bearer do token
     private String recoverToken(HttpServletRequest request) {

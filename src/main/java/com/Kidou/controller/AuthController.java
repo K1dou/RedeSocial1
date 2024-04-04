@@ -1,6 +1,7 @@
 package com.Kidou.controller;
 
 import com.Kidou.config.TokenService;
+import com.Kidou.entities.user.enums.Role;
 import com.Kidou.entities.user.records.RegisterDTO;
 import com.Kidou.entities.user.Users;
 import com.Kidou.entities.user.records.LoginDTO;
@@ -8,6 +9,7 @@ import com.Kidou.entities.user.records.Token;
 import com.Kidou.repositorys.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.sql.SQLIntegrityConstraintViolationException;
 
 
 @RestController
@@ -38,8 +42,16 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterDTO dto) {
 
+        Users existingUser = userRepository.findByEmail(dto.email());
+        if (existingUser != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("O email já está em uso");
+        }
+
         String passwordEncode = passwordEncoder.encode(dto.password());
-        Users u = new Users(dto.name(), dto.email(), passwordEncode, dto.sexo(), dto.role());
+        Users u = new Users(dto.name(), dto.email(), passwordEncode, dto.sexo());
+
+        u.setRole(Role.USER);
+
         userRepository.save(u);
         return ResponseEntity.ok().build();
     }
